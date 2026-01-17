@@ -4,7 +4,7 @@
 
 > ⚠️ **License Required**: This package requires a valid license key purchased from our portal. Without a license key, the package will not function.
 
-> ℹ️ **Versioning**: Current version is 0.0.1 (in-progress). It will move to 1.x after stable.
+> ℹ️ **Versioning**: Current version is 0.0.4 (in-progress). It will move to 1.x after stable.
 
 ## Features
 

@@ -160,7 +160,8 @@ export async function getDeepLink(
     }
 
     // If API didn't return a usable URL, return null as per requirements
-    if (!result.success || !result.url) {
+    // But if success is false, propagate the error
+    if (result.success && !result.url) {
       return { success: true, url: null, message: 'No deep link available' };
     }
 

@@ -24,11 +24,10 @@ export async function generateDeviceFingerprint(): Promise<DeviceFingerprint> {
       ? (await ((DeviceInfo as any).isDeviceRooted?.() ?? false))
       : false;
     
-    const deviceLocales = (DeviceInfo as any).getDeviceLocales?.() as string[] | undefined;
-    const locale =
-      (Array.isArray(deviceLocales) && deviceLocales.length > 0
-        ? deviceLocales[0]
-        : Intl.DateTimeFormat().resolvedOptions().locale) || 'en';
+    const deviceLocales = (DeviceInfo as any).getDeviceLocales?.(); 
+    const primaryLocale = Array.isArray(deviceLocales) && deviceLocales.length > 0 ? deviceLocales[0] : undefined; 
+    const legacyLocale = (DeviceInfo as any).getDeviceLocale?.(); 
+    const locale = (primaryLocale || legacyLocale || Intl.DateTimeFormat().resolvedOptions().locale) || 'en'; 
     const language = (locale || '').split('-')[0] || 'en';
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     

@@ -36,7 +36,7 @@ export async function fetchDeepLinkUrl(
     }
 
     const PACKAGE_NAME = 'react-native-pro-deeplink';
-    const PACKAGE_VERSION = '0.0.2';
+    const PACKAGE_VERSION = '0.0.4';
     
     const payload = {
       licenseKey,
@@ -52,7 +52,7 @@ export async function fetchDeepLinkUrl(
 
     try {
       const PACKAGE_NAME = 'react-native-pro-deeplink';
-      const PACKAGE_VERSION = '0.0.2';
+      const PACKAGE_VERSION = '0.0.4';
       
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -78,12 +78,21 @@ export async function fetchDeepLinkUrl(
 
       const data = await response.json();
       
-      if (data.success && data.url) {
-        return {
-          success: true,
-          url: data.url,
-          message: data.message,
-        };
+      if (data.success) {
+        if (data.url) {
+          return {
+            success: true,
+            url: data.url,
+            message: data.message,
+          };
+        } else {
+          // Success true but no URL means no match found - this is not an error
+          return {
+            success: true,
+            url: null,
+            message: data.message || 'No deep link available',
+          };
+        }
       } else {
         return {
           success: false,
