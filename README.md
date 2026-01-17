@@ -130,6 +130,41 @@ const deepLink = new ProDeepLink({
 const result = await deepLink.getDeepLinkUrl();
 ```
 
+### Analytics & Tracking
+
+This SDK can optionally send deep link analytics events to our tracking service.
+
+- When a deep link is opened via React Native `Linking.getInitialURL()`, the SDK:
+  - Resolves the URL
+  - Collects device fingerprint data
+  - Sends an internal tracking event named `pro_track` with the resolved short URL and fingerprint
+- When a deep link is resolved via the fingerprint API, the SDK:
+  - Resolves the URL from the server
+  - Sends the same `pro_track` event with the short URL and fingerprint
+
+You can also send custom tracking events manually:
+
+```typescript
+import {
+  trackAnalyticsEvent,
+  CustomDeepLinkAnalyticsEvent,
+} from 'rn-prodeeplinks';
+
+const event: CustomDeepLinkAnalyticsEvent = {
+  licenseKey: 'your-license-key',
+  eventType: 'deeplink',
+  eventName: 'pro_track',
+  category: 'custom',
+  action: 'open',
+  label: 'My custom event',
+  properties: {
+    shortUrl: 'https://your-short-url',
+  },
+};
+
+await trackAnalyticsEvent(event);
+```
+
 ## API Reference
 
 ### Functions
@@ -234,24 +269,16 @@ License keys are **NOT FREE**. You must:
 - Invalid or expired license keys will result in API errors
 - License keys cannot be shared or reused without authorization
 
-### Custom License Validate API (Optional)
-For environments with a custom auth API, the license validate endpoint is:
+### Custom License Validation (Optional)
 
-POST {{base_url}}{{api_prefix}}/custom-deep-link/license/validate
+In most cases you should rely on the built‑in license validation handled by this SDK.  
+If you have your own backend that integrates with our license service, you can:
 
-Example (Postman):
+- Call your backend from your app
+- Let your backend talk to our license service
+- Use the result in your own business logic
 
-```
-POST '{{base_url}}{{api_prefix}}/custom-deep-link/license/validate'
-  --header 'Content-Type: application/json'
-  --body '{
-    "licenseKey": "{{license_key}}",
-    "domain": "acme.com",
-    "ipAddress": "103.21.149.10"
-  }'
-```
-
-This package exposes a helper to call this endpoint if needed. It does not interfere with the main deep link resolution flow.
+The exact backend endpoint and payload are specific to your environment and are intentionally not exposed in this README.
 
 ## Error Handling
 

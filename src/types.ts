@@ -80,7 +80,7 @@ export interface CustomDeepLinkAnalyticsDeviceInfo {
 }
 
 export interface CustomDeepLinkAnalyticsEvent {
-  licenseKey: string;
+  licenseKey?: string;
   eventType: string;
   eventName: string;
   category?: string;

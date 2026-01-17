@@ -1,6 +1,11 @@
-import { InitConfig, DeepLinkResponse } from './types';
+import {
+  InitConfig,
+  DeepLinkResponse,
+  CustomDeepLinkAnalyticsEvent,
+  DeviceFingerprint,
+} from './types';
 import { generateDeviceFingerprint } from './fingerprint';
-import { fetchDeepLinkUrlWithRetry, validateLicenseInit } from './api';
+import { fetchDeepLinkUrlWithRetry, validateLicenseInit, trackCustomDeepLinkEvent } from './api';
 import { validateLicenseKeyFormat } from './license';
 import { Linking } from 'react-native';
 
@@ -60,6 +65,30 @@ export async function init(config: InitConfig): Promise<{ success: boolean; erro
   }
 }
 
+async function trackDeepLinkResolved(
+  url: string,
+  source: 'linking' | 'api',
+  fingerprint?: DeviceFingerprint
+): Promise<void> {
+  const event: CustomDeepLinkAnalyticsEvent = {
+    eventType: 'deeplink',
+    eventName: 'pro_track',
+    category: source,
+    action: 'open',
+    label: url,
+    properties: {
+     shortUrl: url, 
+      source,
+      fingerprint,
+    },
+  };
+
+  try {
+    await trackAnalyticsEvent(event as CustomDeepLinkAnalyticsEvent);
+  } catch {
+  }
+}
+
 /**
  * Get deep link URL from server
  * This function automatically handles device fingerprinting internally
@@ -98,6 +127,11 @@ export async function getDeepLink(
     // First: try to read deep link via Linking (if app opened by URL)
     const initialUrl = await Linking.getInitialURL();
     if (initialUrl) {
+      try {
+        const fingerprint = await generateDeviceFingerprint();
+        await trackDeepLinkResolved(initialUrl, 'linking', fingerprint);
+      } catch {
+      }
       if (callback) callback(initialUrl);
       return { success: true, url: initialUrl };
     }
@@ -112,6 +146,13 @@ export async function getDeepLink(
       3, // retry attempts
       DEFAULT_API_ENDPOINT
     );
+
+    if (result.success && result.url) {
+      try {
+        await trackDeepLinkResolved(result.url, 'api', fingerprint);
+      } catch {
+      }
+    }
 
     // Call callback if provided and result is successful
     if (callback && result.success && result.url) {
@@ -149,8 +190,15 @@ export function reset(): void {
   isInitialized = false;
 }
 
+export async function trackAnalyticsEvent(
+  event: CustomDeepLinkAnalyticsEvent
+): Promise<any> {
+  const licenseKey = storedLicenseKey;
+  return trackCustomDeepLinkEvent(event, licenseKey || undefined);
+}
+
 // Export types (but hide internal types from users)
-export type { InitConfig, DeepLinkResponse } from './types';
+export type { InitConfig, DeepLinkResponse, CustomDeepLinkAnalyticsEvent } from './types';
 
 // Keep backward compatibility - export class for advanced users (optional)
 export class ProDeepLink {
@@ -173,14 +221,21 @@ export class ProDeepLink {
       };
     }
     const fingerprint = await generateDeviceFingerprint();
-    return await fetchDeepLinkUrlWithRetry(
+    const result = await fetchDeepLinkUrlWithRetry(
       this.licenseKey,
       fingerprint,
       3,
       DEFAULT_API_ENDPOINT
     );
+    if (result.success && result.url) {
+      try {
+        await trackDeepLinkResolved(result.url, 'api', fingerprint);
+      } catch {
+      }
+    }
+    return result;
   }
 }
 
 // Export default
-export default { init, getDeepLink, isReady, reset };
+export default { init, getDeepLink, isReady, reset, trackAnalyticsEvent };

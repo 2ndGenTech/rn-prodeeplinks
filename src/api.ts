@@ -60,6 +60,7 @@ export async function fetchDeepLinkUrl(
           'Content-Type': 'application/json',
           'X-Package-Name': PACKAGE_NAME,
           'X-Package-Version': PACKAGE_VERSION,
+          'x-license-key': licenseKey,
         },
         body: JSON.stringify(payload),
         signal: controller.signal,
@@ -168,7 +169,10 @@ export async function validateLicenseCustom(
     };
     const res = await fetch(endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-license-key': licenseKey,
+      },
       body: JSON.stringify(body),
     });
     const json = (await res.json().catch(() => ({}))) as LicenseValidationApiResponse;
@@ -214,7 +218,8 @@ export async function validateLicenseInit(licenseKey: string): Promise<{
 
 export async function matchFingerprintCustom(
   payload: FingerprintMatchPayload,
-  baseUrl?: string
+  baseUrl?: string,
+  licenseKey?: string
 ): Promise<FingerprintMatchResponse> {
   try {
     const base = (baseUrl || CUSTOM_API_BASE_URL).trim().replace(/\/+$/, '');
@@ -223,6 +228,7 @@ export async function matchFingerprintCustom(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(licenseKey ? { 'x-license-key': licenseKey } : {}),
       },
       body: JSON.stringify(payload),
     });
@@ -238,13 +244,15 @@ export async function matchFingerprintCustom(
 }
 
 export async function trackCustomDeepLinkEvent(
-  event: CustomDeepLinkAnalyticsEvent
+  event: CustomDeepLinkAnalyticsEvent,
+  licenseKey?: string
 ): Promise<any> {
   try {
     const res = await fetch(ANALYTICS_ENDPOINT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(licenseKey ? { 'x-license-key': licenseKey } : {}),
       },
       body: JSON.stringify(event),
     });
