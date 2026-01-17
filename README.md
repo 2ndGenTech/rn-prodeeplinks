@@ -1,4 +1,4 @@
-# react-native-pro-deeplink
+# rn-prodeeplinks
 
 **PAID PACKAGE** - Secure deep linking package for React Native with license key validation and device fingerprinting.
 
@@ -23,7 +23,7 @@ Before using this package, you must purchase a license key from our portal. The 
 ### Step 2: Installation
 
 ```bash
-npm install react-native-pro-deeplink
+npm install rn-prodeeplinks
 ```
 
 ### Step 3: Install Peer Dependencies
@@ -43,7 +43,7 @@ npm install react-native-device-info @react-native-community/netinfo
 ### Basic Usage
 
 ```typescript
-import { init, getDeepLink } from 'react-native-pro-deeplink';
+import { init, getDeepLink } from 'rn-prodeeplinks';
 
 // Step 1: Initialize with your license key (obtained from our portal after payment)
 const initResult = await init({
@@ -71,7 +71,7 @@ if (result.success && result.url) {
 ### Using Callback
 
 ```typescript
-import { init, getDeepLink } from 'react-native-pro-deeplink';
+import { init, getDeepLink } from 'rn-prodeeplinks';
 
 // Initialize once
 await init({ licenseKey: 'your-license-key-here' });
@@ -86,7 +86,7 @@ getDeepLink((url) => {
 ### Complete Example
 
 ```typescript
-import { init, getDeepLink, isReady } from 'react-native-pro-deeplink';
+import { init, getDeepLink, isReady } from 'rn-prodeeplinks';
 import { Linking } from 'react-native';
 
 async function setupDeepLink() {
@@ -121,7 +121,7 @@ async function setupDeepLink() {
 For advanced users who prefer class-based approach:
 
 ```typescript
-import { ProDeepLink } from 'react-native-pro-deeplink';
+import { ProDeepLink } from 'rn-prodeeplinks';
 
 const deepLink = new ProDeepLink({
   licenseKey: 'your-license-key-here'
@@ -268,7 +268,7 @@ All errors are returned in the `DeepLinkResponse` object with descriptive error 
 Full TypeScript definitions are included. Import types as needed:
 
 ```typescript
-import { InitConfig, DeepLinkResponse } from 'react-native-pro-deeplink';
+import { InitConfig, DeepLinkResponse } from 'rn-prodeeplinks';
 ```
 
 **Available Types:**

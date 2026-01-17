@@ -1,5 +1,5 @@
 {
-  "name": "react-native-pro-deeplink",
+  "name": "rn-prodeeplinks",
   "version": "0.0.1",
   "description": "Secure deep linking package with license key validation and device fingerprinting for React Native",
   "main": "lib/index.js",
@@ -36,6 +36,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/2ndGenTech/rn-prodeeplinks.git"
   }
 }

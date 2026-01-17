@@ -20,7 +20,7 @@ const DEFAULT_API_ENDPOINT = 'https://api.prodeeplink.com/v1/deeplink';
  * 
  * @example
  * ```typescript
- * import { init } from 'react-native-pro-deeplink';
+ * import { init } from 'rn-prodeeplinks';
  * 
  * const result = await init({ licenseKey: 'your-license-key-here' });
  * if (result.success) {
@@ -69,7 +69,7 @@ export async function init(config: InitConfig): Promise<{ success: boolean; erro
  * 
  * @example
  * ```typescript
- * import { getDeepLink } from 'react-native-pro-deeplink';
+ * import { getDeepLink } from 'rn-prodeeplinks';
  * 
  * // Using promise
  * const result = await getDeepLink();
