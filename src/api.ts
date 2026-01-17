@@ -10,6 +10,7 @@ import {
 import { validateLicenseKeyFormat } from './license';
 
 const BASE_API_URL = 'https://api.prodeeplinks.com';
+const DEEP_LINK_ENDPOINT_PATH = '/custom-deep-link/fingerprint/match';
 const ANALYTICS_ENDPOINT = `${BASE_API_URL}/custom-deep-link/track/event`;
 
 /**
@@ -22,7 +23,11 @@ export async function fetchDeepLinkUrl(
   apiEndpoint?: string,
   timeout: number = 10000
 ): Promise<DeepLinkResponse> {
-  const endpoint = apiEndpoint || BASE_API_URL;
+  const base = (apiEndpoint || BASE_API_URL).trim().replace(/\/+$/, '');
+  const endpoint =
+    base.includes('/custom-deep-link/')
+      ? base
+      : `${base}${DEEP_LINK_ENDPOINT_PATH}`;
   
   try {
     // Validate license key format first
@@ -231,8 +236,20 @@ export async function matchFingerprintCustom(
       body: JSON.stringify(payload),
     });
     const data = (await res.json().catch(() => ({}))) as FingerprintMatchResponse;
+    if (res.ok) {
+      console.log('[ProDeepLink] fingerprint match API success', {
+        matched: data?.matched,
+        matchConfidence: data?.matchConfidence,
+      });
+    } else {
+      console.warn('[ProDeepLink] fingerprint match API non-OK response', {
+        status: res.status,
+        statusText: res.statusText,
+      });
+    }
     return data;
   } catch (e: any) {
+    console.error('[ProDeepLink] fingerprint match API error', e?.message || e);
     return {
       matched: false,
       matchConfidence: 0,
@@ -255,8 +272,20 @@ export async function trackCustomDeepLinkEvent(
       body: JSON.stringify(event),
     });
     const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      console.log('[ProDeepLink] track event API success', {
+        eventType: (event as any)?.eventType,
+        eventName: (event as any)?.eventName,
+      });
+    } else {
+      console.warn('[ProDeepLink] track event API non-OK response', {
+        status: res.status,
+        statusText: res.statusText,
+      });
+    }
     return data;
   } catch (e: any) {
+    console.error('[ProDeepLink] track event API error', e?.message || e);
     return { success: false, error: e?.message || 'Analytics event tracking failed' };
   }
 }

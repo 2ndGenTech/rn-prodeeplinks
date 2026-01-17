@@ -1,6 +1,6 @@
 {
   "name": "rn-prodeeplinks",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Secure deep linking package with license key validation and device fingerprinting for React Native",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
