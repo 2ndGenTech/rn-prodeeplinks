@@ -36,7 +36,7 @@ export async function fetchDeepLinkUrl(
     }
 
     const PACKAGE_NAME = 'react-native-pro-deeplink';
-    const PACKAGE_VERSION = '0.0.1';
+    const PACKAGE_VERSION = '0.0.2';
     
     const payload = {
       licenseKey,
@@ -52,7 +52,7 @@ export async function fetchDeepLinkUrl(
 
     try {
       const PACKAGE_NAME = 'react-native-pro-deeplink';
-      const PACKAGE_VERSION = '0.0.1';
+      const PACKAGE_VERSION = '0.0.2';
       
       const response = await fetch(endpoint, {
         method: 'POST',

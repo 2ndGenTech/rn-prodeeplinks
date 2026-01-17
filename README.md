@@ -137,12 +137,14 @@ This SDK can optionally send deep link analytics events to our tracking service.
 - When a deep link is opened via React Native `Linking.getInitialURL()`, the SDK:
   - Resolves the URL
   - Collects device fingerprint data
-  - Sends an internal tracking event named `pro_track` with the resolved short URL and fingerprint
+  - Sends an internal analytics event with the resolved short URL and fingerprint
 - When a deep link is resolved via the fingerprint API, the SDK:
   - Resolves the URL from the server
-  - Sends the same `pro_track` event with the short URL and fingerprint
+  - Sends the same internal analytics event with the short URL and fingerprint
 
-You can also send custom tracking events manually:
+These internal events are handled by the SDK and are not part of the public API.
+
+You can also send custom tracking events manually after calling `init`:
 
 ```typescript
 import {
@@ -151,19 +153,21 @@ import {
 } from 'rn-prodeeplinks';
 
 const event: CustomDeepLinkAnalyticsEvent = {
-  licenseKey: 'your-license-key',
   eventType: 'deeplink',
-  eventName: 'pro_track',
+  eventName: 'my_custom_event',
   category: 'custom',
   action: 'open',
   label: 'My custom event',
   properties: {
     shortUrl: 'https://your-short-url',
+    foo: 'bar',
   },
 };
 
 await trackAnalyticsEvent(event);
 ```
+
+The license key provided to `init` is automatically included in the request headers. You do not need to include the license key in the analytics event payload.
 
 ## API Reference
 
@@ -214,6 +218,26 @@ const result = await getDeepLink();
 // Using callback
 getDeepLink((url) => {
   console.log('Deep link:', url);
+});
+```
+
+#### `trackAnalyticsEvent(event: CustomDeepLinkAnalyticsEvent): Promise<any>`
+
+Sends a custom analytics event to the tracking service.
+
+`init()` must be called successfully first; the stored license key from `init` is sent in the request headers.
+
+**Parameters:**
+- `event` (CustomDeepLinkAnalyticsEvent, required): Event describing what happened. You can use any `eventName` and add any custom properties.
+
+**Example:**
+```typescript
+await trackAnalyticsEvent({
+  eventType: 'deeplink',
+  eventName: 'button_click',
+  properties: {
+    buttonId: 'cta_start',
+  },
 });
 ```
 

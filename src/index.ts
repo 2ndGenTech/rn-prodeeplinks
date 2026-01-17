@@ -193,8 +193,14 @@ export function reset(): void {
 export async function trackAnalyticsEvent(
   event: CustomDeepLinkAnalyticsEvent
 ): Promise<any> {
-  const licenseKey = storedLicenseKey;
-  return trackCustomDeepLinkEvent(event, licenseKey || undefined);
+  if (!isInitialized || !storedLicenseKey) {
+    return {
+      success: false,
+      error: 'Please call init() first with your license key',
+    };
+  }
+  const { licenseKey: _ignored, ...payload } = event as any;
+  return trackCustomDeepLinkEvent(payload as CustomDeepLinkAnalyticsEvent, storedLicenseKey);
 }
 
 // Export types (but hide internal types from users)
