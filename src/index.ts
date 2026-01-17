@@ -13,8 +13,8 @@ import { Linking } from 'react-native';
 let storedLicenseKey: string | null = null;
 let isInitialized: boolean = false;
 
-// Hardcoded API endpoint - user doesn't need to know about this
-const DEFAULT_API_ENDPOINT = 'https://api.prodeeplink.com/v1/deeplink';
+
+const DEFAULT_API_ENDPOINT = 'https://api.prodeeplinks.com/';
 
 /**
  * Initialize the deep link package with license key

@@ -9,9 +9,8 @@ import {
 } from './types';
 import { validateLicenseKeyFormat } from './license';
 
-const DEFAULT_API_ENDPOINT = 'https://api.prodeeplink.com/v1/deeplink';
-const CUSTOM_API_BASE_URL = 'https://api.prodeeplinks.com';
-const ANALYTICS_ENDPOINT = 'https://s.finprim.com/custom-deep-link/track/event';
+const BASE_API_URL = 'https://api.prodeeplinks.com';
+const ANALYTICS_ENDPOINT = `${BASE_API_URL}/custom-deep-link/track/event`;
 
 /**
  * Call API to get deep link URL
@@ -23,7 +22,7 @@ export async function fetchDeepLinkUrl(
   apiEndpoint?: string,
   timeout: number = 10000
 ): Promise<DeepLinkResponse> {
-  const endpoint = apiEndpoint || DEFAULT_API_ENDPOINT;
+  const endpoint = apiEndpoint || BASE_API_URL;
   
   try {
     // Validate license key format first
@@ -35,14 +34,10 @@ export async function fetchDeepLinkUrl(
       };
     }
 
-    const PACKAGE_NAME = 'react-native-pro-deeplink';
-    const PACKAGE_VERSION = '0.0.4';
     
     const payload = {
       licenseKey,
       fingerprint: fingerprint,
-      packageName: PACKAGE_NAME,
-      packageVersion: PACKAGE_VERSION,
       timestamp: Date.now(),
     };
 
@@ -51,15 +46,10 @@ export async function fetchDeepLinkUrl(
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
-      const PACKAGE_NAME = 'react-native-pro-deeplink';
-      const PACKAGE_VERSION = '0.0.4';
-      
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Package-Name': PACKAGE_NAME,
-          'X-Package-Version': PACKAGE_VERSION,
           'x-license-key': licenseKey,
         },
         body: JSON.stringify(payload),
@@ -180,7 +170,6 @@ export async function validateLicenseCustom(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-license-key': licenseKey,
       },
       body: JSON.stringify(body),
     });
@@ -198,7 +187,7 @@ export async function validateLicenseInit(licenseKey: string): Promise<{
   data?: LicenseValidationApiResponse;
 }> {
   try {
-    const endpoint = `${CUSTOM_API_BASE_URL}/custom-deep-link/license/validate`;
+    const endpoint = `${BASE_API_URL}/custom-deep-link/license/validate`;
     const res = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -231,7 +220,7 @@ export async function matchFingerprintCustom(
   licenseKey?: string
 ): Promise<FingerprintMatchResponse> {
   try {
-    const base = (baseUrl || CUSTOM_API_BASE_URL).trim().replace(/\/+$/, '');
+    const base = (baseUrl || BASE_API_URL).trim().replace(/\/+$/, '');
     const endpoint = `${base}/custom-deep-link/fingerprint/match`;
     const res = await fetch(endpoint, {
       method: 'POST',
